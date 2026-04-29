@@ -4,94 +4,64 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Goal } from '../types';
 
 interface GoalCardProps {
-
-    goal: Goal;
-    progress: number;
-    onPress: () => void;
-
+  goal: Goal;
+  progress: number;
+  onPress: () => void;
 }
 
-export default function GoalCard({ goal, progress, onPress}: GoalCardProps) {
+export default function GoalCard({ goal, progress, onPress }: GoalCardProps) {
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'health': return 'fitness-center';
+      case 'career': return 'work';
+      case 'personal': return 'person';
+      case 'finance': return 'attach-money';
+      case 'learning': return 'school';
+      default: return 'flag';
+    }
+  };
 
-    const getCategoryIcon = (category: string) => {
+  const daysUntilTarget = Math.ceil(
+    (new Date(goal.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+  );
 
-        switch(category){
-
-            case 'health': return 'fitness-center';
-            case 'career': return 'work';
-            case 'personal': return 'person';
-            case 'finance': return 'attach-money';
-            case 'learning': return 'school';
-            default: return 'flag';
-
-        }
-
-    };
-
-    const daysUntilTarget = Math.ceil(
-
-        (new Date(goal.targetDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24)
-
-    );
-
-    return(
-
-        <TouchableOpacity style={styles.card} onPress={onPress}>
-            
-            <View style={[styles.colorBar, { backgroundColor: goal.color }]} />
-            
-            <View style={styles.content}>
-            
-                <View style={styles.header}>
-
-                    <MaterialIcons name={getCategoryIcon(goal.category)} size={24} color={goal.color} />
-
-                    <Text style={styles.title}>{goal.title}</Text>
-            
-                </View>
+  return (
+    <TouchableOpacity style={styles.card} onPress={onPress}>
+      <View style={[styles.colorBar, { backgroundColor: goal.color }]} />
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <MaterialIcons name={getCategoryIcon(goal.category)} size={24} color={goal.color} />
+          <Text style={styles.title}>{goal.title}</Text>
+        </View>
         
-                <Text style={styles.description} numberOfLines={2}>{goal.description}</Text>
+        <Text style={styles.description} numberOfLines={2}>
+          {goal.description}
+        </Text>
 
-                <View style={styles.progressContainer}>
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <View 
+              style={[
+                styles.progressFill, 
+                { width: `${Math.min(progress, 100)}%`, backgroundColor: goal.color }
+              ]} 
+            />
+          </View>
+          <Text style={styles.progressText}>{Math.round(progress)}%</Text>
+        </View>
 
-                    <View style={styles.progressBar}>
-
-                        <View 
-                            style={[
-                            styles.progressFill, 
-                            { width: `${Math.min(progress, 100)}%`, backgroundColor: goal.color }
-                            ]} 
-                        />
-
-                    </View>
-
-                    <Text style={styles.progressText}>{Math.round(progress)}%</Text>
-
-                </View>
-
-                <View style={styles.footer}>
-
-                    <Text style={styles.daysText}>
-
-                        {daysUntilTarget > 0 ? `${daysUntilTarget} days left` : 'Target date passed'}
-
-                    </Text>
-
-                    <Text style={styles.dateText}>
-
-                        Target: {new Date(goal.targetDate).toLocaleDateString()}
-
-                    </Text>
-
-                </View>
-
-            </View>
-
-        </TouchableOpacity>
-
-    );
-
-};
+        <View style={styles.footer}>
+          <Text style={styles.daysText}>
+            {daysUntilTarget > 0 ? `${daysUntilTarget} days left` : 'Target date passed'}
+          </Text>
+          <Text style={styles.dateText}>
+            Target: {new Date(goal.targetDate).toLocaleDateString()}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
 
 const styles = StyleSheet.create({
   card: {
