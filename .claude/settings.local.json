@@ -48,7 +48,8 @@
       "Bash(/c/Users/james/AppData/Local/Android/Sdk/platform-tools/adb.exe logcat *)",
       "Bash(cmd.exe /c \"gradlew.bat assembleDebug\")",
       "Bash(./gradlew.bat assembleDebug)",
-      "Bash(/c/Users/james/AppData/Local/Android/Sdk/platform-tools/adb.exe uninstall *)"
+      "Bash(/c/Users/james/AppData/Local/Android/Sdk/platform-tools/adb.exe uninstall *)",
+      "Bash(npm list *)"
     ]
   }
 }
