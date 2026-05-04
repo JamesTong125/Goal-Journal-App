@@ -11,7 +11,7 @@ import JournalScreen from './screens/JournalScreen';
 import GoalsScreen from './screens/GoalsScreen';
 import NewEntryScreen from './screens/NewEntryScreen';
 import EntryDetailScreen from './screens/EntryDetailScreen';
-import NewGoalScreen from './screens/NewGoalScreen';
+import NewGoalScreen from './screens/NewGoalsScreen';
 import GoalDetailScreen from './screens/GoalDetailScreen';
 
 const Tab = createBottomTabNavigator();
@@ -22,14 +22,23 @@ function TabNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#4ECDC4',
+        tabBarActiveTintColor: '#667eea',
         tabBarInactiveTintColor: '#999',
         tabBarStyle: {
-          borderTopWidth: 1,
-          borderTopColor: '#e0e0e0',
+          borderTopWidth: 0,
+          backgroundColor: '#fff',
           paddingTop: 8,
           paddingBottom: 8,
-          height: 60,
+          height: 65,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 8,
+          elevation: 5,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
         },
       }}
     >

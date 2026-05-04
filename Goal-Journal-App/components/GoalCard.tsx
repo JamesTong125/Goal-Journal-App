@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, LinearGradient } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Goal } from '../types';
 
@@ -27,38 +27,55 @@ export default function GoalCard({ goal, progress, onPress }: GoalCardProps) {
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <View style={[styles.colorBar, { backgroundColor: goal.color }]} />
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <MaterialIcons name={getCategoryIcon(goal.category)} size={24} color={goal.color} />
-          <Text style={styles.title}>{goal.title}</Text>
-        </View>
-        
-        <Text style={styles.description} numberOfLines={2}>
-          {goal.description}
-        </Text>
-
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View 
-              style={[
-                styles.progressFill, 
-                { width: `${Math.min(progress, 100)}%`, backgroundColor: goal.color }
-              ]} 
-            />
+      <LinearGradient
+        colors={[goal.color, `${goal.color}dd`]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientBorder}
+      >
+        <View style={styles.cardInner}>
+          <View style={styles.header}>
+            <View style={[styles.categoryIcon, { backgroundColor: `${goal.color}20` }]}>
+              <MaterialIcons name={getCategoryIcon(goal.category)} size={24} color={goal.color} />
+            </View>
+            <View style={styles.headerText}>
+              <Text style={styles.title}>{goal.title}</Text>
+              <Text style={styles.category}>{goal.category.charAt(0).toUpperCase() + goal.category.slice(1)}</Text>
+            </View>
           </View>
-          <Text style={styles.progressText}>{Math.round(progress)}%</Text>
-        </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.daysText}>
-            {daysUntilTarget > 0 ? `${daysUntilTarget} days left` : 'Target date passed'}
+          <Text style={styles.description} numberOfLines={2}>
+            {goal.description}
           </Text>
-          <Text style={styles.dateText}>
-            Target: {new Date(goal.targetDate).toLocaleDateString()}
-          </Text>
+
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <LinearGradient
+                colors={[goal.color, `${goal.color}aa`]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[styles.progressFill, { width: `${Math.min(progress, 100)}%` }]}
+              />
+            </View>
+            <Text style={[styles.progressText, { color: goal.color }]}>{Math.round(progress)}%</Text>
+          </View>
+
+          <View style={styles.footer}>
+            <View style={styles.footerItem}>
+              <MaterialIcons name="schedule" size={16} color="#999" />
+              <Text style={styles.footerText}>
+                {daysUntilTarget > 0 ? `${daysUntilTarget}d left` : 'Due!'}
+              </Text>
+            </View>
+            <View style={styles.footerItem}>
+              <MaterialIcons name="event" size={16} color="#999" />
+              <Text style={styles.footerText}>
+                {new Date(goal.targetDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
@@ -66,40 +83,55 @@ export default function GoalCard({ goal, progress, onPress }: GoalCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 20,
     marginBottom: 16,
-    flexDirection: 'row',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 12,
+    elevation: 5,
+    overflow: 'hidden',
   },
-  colorBar: {
-    width: 6,
-    borderTopLeftRadius: 12,
-    borderBottomLeftRadius: 12,
+  gradientBorder: {
+    padding: 3,
   },
-  content: {
-    flex: 1,
+  cardInner: {
+    backgroundColor: '#fff',
+    borderRadius: 17,
     padding: 16,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
+  },
+  categoryIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  headerText: {
+    flex: 1,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 8,
-    flex: 1,
+    fontWeight: '700',
     color: '#333',
+    marginBottom: 2,
+  },
+  category: {
+    fontSize: 12,
+    color: '#999',
+    textTransform: 'capitalize',
   },
   description: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 12,
+    marginBottom: 16,
+    lineHeight: 20,
   },
   progressContainer: {
     flexDirection: 'row',
@@ -108,33 +140,33 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     flex: 1,
-    height: 8,
+    height: 10,
     backgroundColor: '#f0f0f0',
-    borderRadius: 4,
+    borderRadius: 5,
     overflow: 'hidden',
-    marginRight: 8,
+    marginRight: 12,
   },
   progressFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 5,
   },
   progressText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    width: 45,
+    fontSize: 16,
+    fontWeight: '700',
+    width: 50,
     textAlign: 'right',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  daysText: {
-    fontSize: 12,
-    color: '#999',
+  footerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  dateText: {
+  footerText: {
     fontSize: 12,
     color: '#999',
+    marginLeft: 4,
   },
 });
