@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { mockEntries, mockGoals } from '../data/mockData';
+import { useData } from '../data/DataContext';
+import { confirmAction, notify } from '../utils/confirm';
 
 interface EntryDetailScreenProps {
   navigation: any;
@@ -11,7 +12,8 @@ interface EntryDetailScreenProps {
 
 export default function EntryDetailScreen({ navigation, route }: EntryDetailScreenProps) {
   const { entryId } = route.params;
-  const entry = mockEntries.find(e => e.id === entryId);
+  const { goals, entries, deleteEntry } = useData();
+  const entry = entries.find(e => e.id === entryId);
 
   if (!entry) {
     return (
@@ -43,23 +45,21 @@ export default function EntryDetailScreen({ navigation, route }: EntryDetailScre
     }
   };
 
-  const relatedGoals = mockGoals.filter(goal => entry.goalIds.includes(goal.id));
+  const relatedGoals = goals.filter(goal => entry.goalIds.includes(goal.id));
 
   const handleDelete = () => {
-    Alert.alert(
+    confirmAction(
       'Delete Entry',
       'Are you sure you want to delete this journal entry?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive',
-          onPress: () => {
-            // In a real app, this would delete from database
-            navigation.goBack();
-          }
+      'Delete',
+      async () => {
+        try {
+          await deleteEntry(entry.id);
+          navigation.goBack();
+        } catch (error) {
+          notify('Error', 'Could not delete this entry. Please try again.');
         }
-      ]
+      }
     );
   };
 

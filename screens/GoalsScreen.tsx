@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import GoalCard from '../components/GoalCard';
-import { mockGoals, mockEntries } from '../data/mockData';
+import { useData } from '../data/DataContext';
 
 interface GoalsScreenProps {
   navigation: any;
 }
 
 export default function GoalsScreen({ navigation }: GoalsScreenProps) {
-  const [goals] = useState(mockGoals);
+  const { goals, entries } = useData();
 
   const calculateProgress = (goalId: string) => {
-    const relatedEntries = mockEntries.filter(entry => entry.goalIds.includes(goalId));
+    const relatedEntries = entries.filter(entry => entry.goalIds.includes(goalId));
     return Math.min(relatedEntries.length * 10, 100);
   };
 

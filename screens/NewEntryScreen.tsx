@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { mockGoals } from '../data/mockData';
+import { useData } from '../data/DataContext';
+import { notify } from '../utils/confirm';
 
 interface NewEntryScreenProps {
   navigation: any;
@@ -12,6 +13,7 @@ export default function NewEntryScreen({ navigation }: NewEntryScreenProps) {
   const [content, setContent] = useState('');
   const [selectedMood, setSelectedMood] = useState<'great' | 'good' | 'okay' | 'bad' | 'terrible'>('good');
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
+  const { goals, addEntry } = useData();
 
   const moods = [
     { value: 'great', emoji: '😄', label: 'Great' },
@@ -29,16 +31,24 @@ export default function NewEntryScreen({ navigation }: NewEntryScreenProps) {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!content.trim()) {
-      Alert.alert('Error', 'Please write something in your journal entry');
+      notify('Error', 'Please write something in your journal entry');
       return;
     }
 
-    // In a real app, this would save to a database
-    Alert.alert('Success', 'Journal entry saved!', [
-      { text: 'OK', onPress: () => navigation.goBack() }
-    ]);
+    try {
+      await addEntry({
+        // Local calendar date (YYYY-MM-DD), not UTC
+        date: new Date().toLocaleDateString('en-CA'),
+        content: content.trim(),
+        mood: selectedMood,
+        goalIds: selectedGoals,
+      });
+      navigation.goBack();
+    } catch (error) {
+      notify('Error', 'Could not save your journal entry. Please try again.');
+    }
   };
 
   return (
@@ -90,7 +100,7 @@ export default function NewEntryScreen({ navigation }: NewEntryScreenProps) {
           <Text style={styles.sublabel}>
             Select goals this entry relates to
           </Text>
-          {mockGoals.map((goal) => (
+          {goals.map((goal) => (
             <TouchableOpacity
               key={goal.id}
               style={[

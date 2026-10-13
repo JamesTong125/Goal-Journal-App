@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useData } from '../data/DataContext';
+import { notify } from '../utils/confirm';
 
 interface NewGoalScreenProps {
   navigation: any;
+}
+
+// Checks format and that the date actually exists (e.g. rejects 2026-02-30)
+function isValidDate(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const d = new Date(value + 'T00:00:00');
+  return !isNaN(d.getTime()) && d.toLocaleDateString('en-CA') === value;
 }
 
 export default function NewGoalScreen({ navigation }: NewGoalScreenProps) {
@@ -12,6 +21,7 @@ export default function NewGoalScreen({ navigation }: NewGoalScreenProps) {
   const [description, setDescription] = useState('');
   const [targetDate, setTargetDate] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'health' | 'career' | 'personal' | 'finance' | 'learning' | 'other'>('personal');
+  const { addGoal } = useData();
 
   const categories = [
     { value: 'health', icon: 'fitness-center', label: 'Health', color: '#FF6B6B' },
@@ -22,21 +32,36 @@ export default function NewGoalScreen({ navigation }: NewGoalScreenProps) {
     { value: 'other', icon: 'flag', label: 'Other', color: '#C7CEEA' },
   ];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim()) {
-      Alert.alert('Error', 'Please enter a goal title');
+      notify('Error', 'Please enter a goal title');
       return;
     }
 
     if (!description.trim()) {
-      Alert.alert('Error', 'Please enter a goal description');
+      notify('Error', 'Please enter a goal description');
       return;
     }
 
-    // In a real app, this would save to a database
-    Alert.alert('Success', 'Goal created!', [
-      { text: 'OK', onPress: () => navigation.goBack() }
-    ]);
+    const date = targetDate.trim();
+    if (date && !isValidDate(date)) {
+      notify('Error', 'Target date must be a real date in YYYY-MM-DD format');
+      return;
+    }
+
+    const category = categories.find(c => c.value === selectedCategory)!;
+    try {
+      await addGoal({
+        title: title.trim(),
+        description: description.trim(),
+        targetDate: date,
+        category: selectedCategory,
+        color: category.color,
+      });
+      navigation.goBack();
+    } catch (error) {
+      notify('Error', 'Could not save your goal. Please try again.');
+    }
   };
 
   return (

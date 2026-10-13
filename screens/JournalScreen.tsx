@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import JournalEntryCard from '../components/JournalEntryCard';
-import { mockEntries } from '../data/mockData';
+import { useData } from '../data/DataContext';
 
 interface JournalScreenProps {
   navigation: any;
 }
 
 export default function JournalScreen({ navigation }: JournalScreenProps) {
-  const [entries] = useState(mockEntries);
+  const { entries } = useData();
 
   const sortedEntries = [...entries].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()

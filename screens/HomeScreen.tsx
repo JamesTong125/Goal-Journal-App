@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import GoalCard from '../components/GoalCard';
 import JournalEntryCard from '../components/JournalEntryCard';
-import { mockGoals, mockEntries } from '../data/mockData';
+import { useData } from '../data/DataContext';
+import { useAuth } from '../data/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -14,8 +15,8 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
-  const [goals] = useState(mockGoals);
-  const [entries] = useState(mockEntries);
+  const { goals, entries, error, refresh } = useData();
+  const { signOut } = useAuth();
 
   const calculateProgress = (goalId: string) => {
     const relatedEntries = entries.filter(entry => entry.goalIds.includes(goalId));
@@ -47,13 +48,31 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                 })}
               </Text>
             </View>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => navigation.navigate('NewEntry')}
-            >
-              <MaterialIcons name="add" size={28} color="#fff" />
-            </TouchableOpacity>
+            <View style={styles.headerButtons}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={signOut}
+                accessibilityRole="button"
+                accessibilityLabel="Sign out"
+              >
+                <MaterialIcons name="logout" size={24} color="#fff" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => navigation.navigate('NewEntry')}
+                accessibilityRole="button"
+                accessibilityLabel="New journal entry"
+              >
+                <MaterialIcons name="add" size={28} color="#fff" />
+              </TouchableOpacity>
+            </View>
           </View>
+
+          {error && (
+            <TouchableOpacity style={styles.errorBanner} onPress={refresh} accessibilityRole="button">
+              <Text style={styles.errorText}>Couldn't load your data: {error}. Tap to retry.</Text>
+            </TouchableOpacity>
+          )}
 
           <View style={styles.quickStats}>
             <View style={styles.statCard}>
@@ -164,6 +183,20 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.9)',
     marginTop: 4,
     fontWeight: '500',
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  errorBanner: {
+    backgroundColor: 'rgba(244,67,54,0.9)',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#fff',
+    fontSize: 14,
   },
   addButton: {
     backgroundColor: 'rgba(255,255,255,0.2)',

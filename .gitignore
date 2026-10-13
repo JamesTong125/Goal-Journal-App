@@ -39,3 +39,12 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# local mock data (kept on disk, not committed)
+data/mockData.ts
+# Supabase credentials
+.env
+
+# build/test output and logs
+.expo-export-test/
+*.log

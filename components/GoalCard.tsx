@@ -23,7 +23,7 @@ export default function GoalCard({ goal, progress, onPress }: GoalCardProps) {
   };
 
   const daysUntilTarget = Math.ceil(
-    (new Date(goal.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+    (new Date(goal.targetDate + 'T00:00:00').getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   );
 
   return (
@@ -62,18 +62,27 @@ export default function GoalCard({ goal, progress, onPress }: GoalCardProps) {
           </View>
 
           <View style={styles.footer}>
-            <View style={styles.footerItem}>
-              <MaterialIcons name="schedule" size={16} color="#999" />
-              <Text style={styles.footerText}>
-                {daysUntilTarget > 0 ? `${daysUntilTarget}d left` : 'Due!'}
-              </Text>
-            </View>
-            <View style={styles.footerItem}>
-              <MaterialIcons name="event" size={16} color="#999" />
-              <Text style={styles.footerText}>
-                {new Date(goal.targetDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </Text>
-            </View>
+            {goal.targetDate ? (
+              <>
+                <View style={styles.footerItem}>
+                  <MaterialIcons name="schedule" size={16} color="#999" />
+                  <Text style={styles.footerText}>
+                    {daysUntilTarget > 0 ? `${daysUntilTarget}d left` : 'Due!'}
+                  </Text>
+                </View>
+                <View style={styles.footerItem}>
+                  <MaterialIcons name="event" size={16} color="#999" />
+                  <Text style={styles.footerText}>
+                    {new Date(goal.targetDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </Text>
+                </View>
+              </>
+            ) : (
+              <View style={styles.footerItem}>
+                <MaterialIcons name="event" size={16} color="#999" />
+                <Text style={styles.footerText}>No target date</Text>
+              </View>
+            )}
           </View>
         </View>
       </LinearGradient>

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import JournalEntryCard from '../components/JournalEntryCard';
-import { mockGoals, mockEntries } from '../data/mockData';
+import { useData } from '../data/DataContext';
 
 interface GoalDetailScreenProps {
   navigation: any;
@@ -12,7 +12,8 @@ interface GoalDetailScreenProps {
 
 export default function GoalDetailScreen({ navigation, route }: GoalDetailScreenProps) {
   const { goalId } = route.params;
-  const goal = mockGoals.find(g => g.id === goalId);
+  const { goals, entries } = useData();
+  const goal = goals.find(g => g.id === goalId);
 
   if (!goal) {
     return (
@@ -22,13 +23,13 @@ export default function GoalDetailScreen({ navigation, route }: GoalDetailScreen
     );
   }
 
-  const relatedEntries = mockEntries
+  const relatedEntries = entries
     .filter(entry => entry.goalIds.includes(goalId))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const progress = Math.min(relatedEntries.length * 10, 100);
   const daysUntilTarget = Math.ceil(
-    (new Date(goal.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+    (new Date(goal.targetDate + 'T00:00:00').getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   );
 
   const getCategoryIcon = (category: string) => {
@@ -80,7 +81,7 @@ export default function GoalDetailScreen({ navigation, route }: GoalDetailScreen
           </View>
 
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>{daysUntilTarget > 0 ? daysUntilTarget : 0}</Text>
+            <Text style={styles.statNumber}>{goal.targetDate ? Math.max(daysUntilTarget, 0) : '–'}</Text>
             <Text style={styles.statLabel}>Days Remaining</Text>
           </View>
         </View>
@@ -91,11 +92,13 @@ export default function GoalDetailScreen({ navigation, route }: GoalDetailScreen
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Target Date</Text>
               <Text style={styles.infoValue}>
-                {new Date(goal.targetDate).toLocaleDateString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric'
-                })}
+                {goal.targetDate
+                  ? new Date(goal.targetDate + 'T00:00:00').toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })
+                  : 'Not set'}
               </Text>
             </View>
           </View>
