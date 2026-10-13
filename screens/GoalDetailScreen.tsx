@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import JournalEntryCard from '../components/JournalEntryCard';
 import { useData } from '../data/DataContext';
+import { calculateGoalProgress } from '../utils/progress';
 
 interface GoalDetailScreenProps {
   navigation: any;
@@ -27,7 +28,7 @@ export default function GoalDetailScreen({ navigation, route }: GoalDetailScreen
     .filter(entry => entry.goalIds.includes(goalId))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const progress = Math.min(relatedEntries.length * 10, 100);
+  const progress = calculateGoalProgress(goalId, entries);
   const daysUntilTarget = Math.ceil(
     (new Date(goal.targetDate + 'T00:00:00').getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   );

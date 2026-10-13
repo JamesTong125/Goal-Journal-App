@@ -57,10 +57,10 @@ Core types defined in `types/index.ts`:
 Currently uses local component state with mock data from `data/mockData.ts`. No global state management or backend integration yet.
 
 ### Progress Calculation
-Progress is calculated based on journal entries related to a goal:
-- Each related journal entry contributes 10% to progress
-- Maximum progress is capped at 100%
-- Calculation: `Math.min(relatedEntries.length * 10, 100)`
+Progress is set by the user per entry (see `utils/progress.ts`):
+- Each entry stores `goalProgress: { [goalId]: percent }` (DB column `entries.goal_progress`, jsonb)
+- A goal's progress is the sum of its entries' values, capped at 100%
+- Entries without a stored value count as 10% (`DEFAULT_ENTRY_PROGRESS`)
 
 ### UI Patterns
 - **Color scheme**: Primary color `#4ECDC4` (teal), secondary `#FF6B6B` (coral)

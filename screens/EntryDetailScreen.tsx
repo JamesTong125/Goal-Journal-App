@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
+import { entryProgressFor } from '../utils/progress';
 import { confirmAction, notify } from '../utils/confirm';
 
 interface EntryDetailScreenProps {
@@ -83,7 +84,7 @@ export default function EntryDetailScreen({ navigation, route }: EntryDetailScre
         <View style={styles.dateSection}>
           <MaterialIcons name="calendar-today" size={20} color="#666" />
           <Text style={styles.date}>
-            {new Date(entry.date).toLocaleDateString('en-US', { 
+            {new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { 
               weekday: 'long',
               month: 'long',
               day: 'numeric',
@@ -117,6 +118,9 @@ export default function EntryDetailScreen({ navigation, route }: EntryDetailScre
                   <Text style={styles.goalTitle}>{goal.title}</Text>
                   <Text style={styles.goalCategory}>{goal.category}</Text>
                 </View>
+                <View style={[styles.progressBadge, { backgroundColor: goal.color + '30' }]}>
+                  <Text style={styles.progressBadgeText}>+{entryProgressFor(entry, goal.id)}%</Text>
+                </View>
                 <MaterialIcons name="chevron-right" size={24} color="#999" />
               </TouchableOpacity>
             ))}
@@ -128,6 +132,17 @@ export default function EntryDetailScreen({ navigation, route }: EntryDetailScre
 }
 
 const styles = StyleSheet.create({
+  progressBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginRight: 8,
+  },
+  progressBadgeText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',

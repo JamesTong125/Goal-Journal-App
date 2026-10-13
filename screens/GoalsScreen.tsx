@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import GoalCard from '../components/GoalCard';
 import { useData } from '../data/DataContext';
+import { calculateGoalProgress } from '../utils/progress';
 
 interface GoalsScreenProps {
   navigation: any;
@@ -13,10 +14,7 @@ interface GoalsScreenProps {
 export default function GoalsScreen({ navigation }: GoalsScreenProps) {
   const { goals, entries } = useData();
 
-  const calculateProgress = (goalId: string) => {
-    const relatedEntries = entries.filter(entry => entry.goalIds.includes(goalId));
-    return Math.min(relatedEntries.length * 10, 100);
-  };
+  const calculateProgress = (goalId: string) => calculateGoalProgress(goalId, entries);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

@@ -19,8 +19,13 @@ create table if not exists public.entries (
   content    text not null,
   mood       text not null check (mood in ('great', 'good', 'okay', 'bad', 'terrible')),
   goal_ids   uuid[] not null default '{}',
+  goal_progress jsonb not null default '{}'::jsonb, -- { "<goal id>": <percent 0-100>, ... }
   created_at timestamptz not null default now()
 );
+
+-- Migration for databases created before per-entry progress existed (safe to re-run).
+alter table public.entries
+  add column if not exists goal_progress jsonb not null default '{}'::jsonb;
 
 create index if not exists goals_user_id_idx on public.goals (user_id);
 create index if not exists entries_user_id_idx on public.entries (user_id);

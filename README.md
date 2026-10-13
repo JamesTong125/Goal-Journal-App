@@ -1,103 +1,64 @@
 # Goal Journal
 
-A goal-tracking and journaling app built with React Native and Expo. Set goals, write journal entries tied to them, and watch your progress grow. Data syncs through Supabase, so you can sign in on the web or your phone and see the same goals and entries.
+**Set goals, write about your days, and watch your progress grow.**
+
+### 👉 [Open Goal Journal](https://goal-journal-app-two.vercel.app)
+
+Goal Journal is a simple journal that connects what you write each day to the goals you care about. Each entry records how far it moved your goals forward, so you can see at a glance how close you are to running that race, learning that language, or hitting that savings target.
+
+<p align="center">
+  <img src="docs/screenshots/home.png" width="260" alt="Home screen showing goal stats and progress cards" />
+  <img src="docs/screenshots/journal.png" width="260" alt="Journal screen listing entries with mood indicators" />
+  <img src="docs/screenshots/goals.png" width="260" alt="Goals screen showing each goal with a progress bar" />
+</p>
 
 ## Features
 
-- Create goals with a category, description, and optional target date
-- Write journal entries with a mood and link them to one or more goals
-- Goal progress calculated from linked entries (10% per entry, capped at 100%)
-- Email/password accounts with cloud sync across devices
-- Runs on web, iOS, and Android from one codebase
+### 🏠 Your progress at a glance
+The home screen shows how many goals you're working on, how many entries you've written, and your average progress across all goals, along with your top goals and most recent entries.
 
-## Tech stack
+### 🎯 Goals that track themselves
+Create a goal with a title, description, category (Health, Career, Personal, Finance, Learning, or Other), and an optional target date. Each goal shows a countdown to its target date and a progress bar that fills as you journal about it.
+
+<p align="center">
+  <img src="docs/screenshots/goal.png" width="260" alt="Goal detail screen with progress, entry count, and days remaining" />
+</p>
+
+### 📝 Journal with your mood
+Write about your day and pick how you're feeling, from 😄 Great to 😢 Terrible. Link the entry to any goals it relates to, and it'll show up on those goals' pages.
+
+<p align="center">
+  <img src="docs/screenshots/newentry.png" width="260" alt="New entry screen with mood picker and goal selection" />
+  <img src="docs/screenshots/entry.png" width="260" alt="Entry detail screen showing mood, text, and related goals" />
+</p>
+
+### ☁️ Synced across your devices
+Sign in with your email and your goals and entries are saved to your account in the cloud. Write on your computer, then pick up where you left off on your phone. Your journal is private: only you can see your entries.
+
+<p align="center">
+  <img src="docs/screenshots/auth.png" width="260" alt="Sign in screen" />
+</p>
+
+## Get the app
+
+| Platform | How to get it |
+| --- | --- |
+| 🌐 **Web** | Go to **[goal-journal-app-two.vercel.app](https://goal-journal-app-two.vercel.app)** in any browser. On your phone, use *Add to Home Screen* to get an app icon. |
+| 🤖 **Android** | Download the latest `.apk` from the [Releases page](https://github.com/JamesTong125/Goal-Journal-App/releases) and open it on your phone. You may need to allow *Install unknown apps* for your browser. |
+| 🍎 **iPhone** | Use the web version and add it to your home screen. |
+
+## Getting started
+
+1. **Create an account.** Tap *Sign up*, enter your email and a password, then confirm your email using the link we send you.
+2. **Add a goal.** Go to the **Goals** tab and tap **+**.
+3. **Write your first entry.** Tap **+** on the Home or Journal tab, choose your mood, and write about your day.
+4. **Log your progress.** Select the goals the entry relates to and set how much progress you made on each (10% by default).
+5. **Watch your goals fill up.** Each goal's progress bar grows with every entry until it reaches 100%.
+
+---
+
+## Built with:
 
 - [Expo](https://expo.dev) SDK 54, React Native 0.81, React 19, TypeScript
 - [React Navigation](https://reactnavigation.org) (bottom tabs + native stack)
 - [Supabase](https://supabase.com) for auth and Postgres storage, secured with Row Level Security
-
-## Getting started
-
-### Prerequisites
-
-- Node.js 20+
-- A free [Supabase](https://supabase.com) project
-- Optional: [Expo Go](https://expo.dev/go) on your phone
-
-### 1. Install dependencies
-
-```bash
-git clone https://github.com/JamesTong125/Goal-Journal-App.git
-cd Goal-Journal-App
-npm install
-```
-
-### 2. Configure Supabase
-
-1. In the Supabase dashboard, open **SQL Editor**, paste the contents of [`supabase/schema.sql`](supabase/schema.sql), and run it. This creates the `goals` and `entries` tables and the policies that restrict each user to their own data.
-2. Copy the env template and fill in your project URL and publishable (anon) key from **Project Settings → API**:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   ```env
-   EXPO_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-publishable-or-anon-key
-   ```
-
-   `.env` is git-ignored. Never put the `service_role` key in this app.
-
-3. Under **Authentication → URL Configuration**, set the Site URL to where you run the app (e.g. `http://localhost:8081`) so email confirmation links land in the right place.
-
-### 3. Run the app
-
-```bash
-npm run web      # open in the browser at http://localhost:8081
-npm start        # start Expo; scan the QR code with Expo Go, or press a / i / w
-```
-
-## Scripts
-
-| Command | Description |
-| --- | --- |
-| `npm start` | Start the Expo dev server |
-| `npm run web` | Start the dev server and open the web app |
-| `npm run build:web` | Build a static web bundle into `dist/` |
-| `npm run android` / `npm run ios` | Build and run a native app (requires Android Studio / Xcode) |
-
-## Deploying the web app
-
-`npm run build:web` produces a static site in `dist/` that any static host can serve. The Supabase env vars are baked in at build time, so set them on your host.
-
-**Vercel / Netlify**
-
-1. Import the GitHub repo.
-2. Build command: `npm run build:web` — Output directory: `dist`
-3. Add `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` as environment variables.
-4. Add your deployed URL to Supabase **Authentication → URL Configuration** (Site URL and Redirect URLs).
-
-**EAS Hosting**
-
-```bash
-npm run build:web
-npx eas-cli@latest deploy
-```
-
-## Project structure
-
-```
-├── App.tsx              # Navigation and auth gating
-├── screens/             # Home, Journal, Goals, detail, create, and auth screens
-├── components/          # GoalCard, JournalEntryCard
-├── data/                # AuthContext (session) and DataContext (Supabase CRUD)
-├── lib/supabase.ts      # Supabase client
-├── utils/confirm.ts     # Cross-platform alert/confirm helpers
-├── types/               # Goal and JournalEntry types
-└── supabase/schema.sql  # Database tables and Row Level Security policies
-```
-
-## Security notes
-
-- The publishable/anon key is meant to ship in client apps. Data is protected by the Row Level Security policies in `schema.sql`, which only allow a signed-in user to read and modify their own rows.
-- Don't disable RLS on the `goals` or `entries` tables.

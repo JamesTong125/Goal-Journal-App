@@ -40,6 +40,7 @@ function toEntry(row: any): JournalEntry {
     content: row.content,
     mood: row.mood,
     goalIds: row.goal_ids ?? [],
+    goalProgress: row.goal_progress ?? {},
     createdAt: row.created_at,
   };
 }
@@ -105,6 +106,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         content: entry.content,
         mood: entry.mood,
         goal_ids: entry.goalIds,
+        goal_progress: entry.goalProgress,
       })
       .select()
       .single();

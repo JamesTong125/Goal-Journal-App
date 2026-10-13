@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import GoalCard from '../components/GoalCard';
 import JournalEntryCard from '../components/JournalEntryCard';
 import { useData } from '../data/DataContext';
+import { calculateGoalProgress } from '../utils/progress';
 import { useAuth } from '../data/AuthContext';
 
 const { width } = Dimensions.get('window');
@@ -18,11 +19,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const { goals, entries, error, refresh } = useData();
   const { signOut } = useAuth();
 
-  const calculateProgress = (goalId: string) => {
-    const relatedEntries = entries.filter(entry => entry.goalIds.includes(goalId));
-    // Simple progress calculation: 10% per entry, max 100%
-    return Math.min(relatedEntries.length * 10, 100);
-  };
+  const calculateProgress = (goalId: string) => calculateGoalProgress(goalId, entries);
 
   const recentEntries = [...entries]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())

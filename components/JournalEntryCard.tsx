@@ -40,7 +40,7 @@ export default function JournalEntryCard({ entry, onPress }: JournalEntryCardPro
             <MaterialIcons name="calendar-today" size={16} color={getMoodColor(entry.mood)} />
           </View>
           <Text style={styles.date}>
-            {new Date(entry.date).toLocaleDateString('en-US', {
+            {new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', {
               month: 'short',
               day: 'numeric',
               year: 'numeric'

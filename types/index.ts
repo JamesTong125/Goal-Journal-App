@@ -14,6 +14,7 @@ export interface JournalEntry {
   content: string;
   mood: 'great' | 'good' | 'okay' | 'bad' | 'terrible';
   goalIds: string[]; // Goals this entry relates to
+  goalProgress: Record<string, number>; // goalId -> progress % this entry added (0-100)
   createdAt: string;
 }
 
